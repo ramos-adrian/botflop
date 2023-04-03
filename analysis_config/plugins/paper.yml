@@ -38,22 +38,22 @@ VillagerOptimiser:
 StackMob:
   prefix: "❌"
   value: |-
-    Acumular mobs causa más lag.
+    Stackear mobs causa más lag.
     Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 Stacker:
   prefix: "❌"
   value: |-
-    Acumular mobs causa más lag.
+    Stackear mobs causa más lag.
     Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 MobStacker:
   prefix: "❌"
   value: |-
-    Acumular mobs causa más lag.
+    Stackear mobs causa más lag.
     Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 WildStacker:
   prefix: "❌"
   value: |-
-    Acumular mobs causa más lag.
+    Stackear mobs causa más lag.
     Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 FastAsyncWorldEdit:
   prefix: "❌"
