@@ -11,20 +11,20 @@ function componentToHex(c) {
 module.exports = async function analyzeTimings(message, client, args) {
 	const author = message.author ?? message.user;
 	const TimingsEmbed = new EmbedBuilder()
-		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
-		.setFooter({ text: `Requested by ${author.tag}`, iconURL: author.avatarURL() });
+		.setDescription('Estos no son valores mágicos. Muchas de estas configuraciones tienen consecuencias reales en la mecánica de tu servidor. Consulta [esta guía en inglés](https://eternity.community/index.php/paper-optimization/) para obtener información detallada sobre la funcionalidad de cada configuración.\n\nTambién puedes ver esta [serie de videos en español](https://www.youtube.com/playlist?list=PLXzwWvD3jl-s1P__FQnwZ3OujFilCJEQU) para conocer más acerca de estas configuraciones.')
+		.setFooter({ text: `Solicitado por ${author.tag}`, iconURL: author.avatarURL() });
 
 	let url;
 	const fields = [];
 
 	for (const arg of args) {
 		if (message.commandName && arg.startsWith('https://spark.lucko.me')) {
-			TimingsEmbed.addFields([{ name: '⚠️ Spark Profile', value: 'This is a Spark Profile. Use /profile instead for this type of report.' }]);
+			TimingsEmbed.addFields([{ name: '⚠️ Perfil de Spark', value: 'Este es un Perfil de Spark. Usa /perfil en su lugar para este tipo de informe.' }]);
 			return [{ embeds: [TimingsEmbed] }];
 		}
 		if (arg.startsWith('https://timin') && arg.includes('?id=')) url = arg.replace('/d=', '/?id=').split('#')[0].split('\n')[0];
 		if (arg.startsWith('https://www.spigotmc.org/go/timings?url=') || arg.startsWith('https://spigotmc.org/go/timings?url=')) {
-			TimingsEmbed.addFields([{ name: '❌ Spigot', value: 'Spigot timings have limited information. Switch to [Purpur](https://purpurmc.org) for better timings analysis. All your plugins will be compatible, and if you don\'t like it, you can easily switch back.' }])
+			TimingsEmbed.addFields([{ name: '❌ Spigot', value: 'Los tiempos de Spigot tienen información limitada. Cambia a [Purpur](https://purpurmc.org) para obtener un mejor análisis de los tiempos. Todos tus plugins serán compatibles, y si no te gusta, puedes cambiar fácilmente de vuelta.' }])
 				.setURL(url);
 			return [{ embeds: [TimingsEmbed] }];
 		}
@@ -35,7 +35,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	// Start typing
 	if (!message.commandName) await message.channel.sendTyping();
 
-	client.logger.info(`Timings analyzed from ${author.tag} (${author.id}): ${url}`);
+	client.logger.info(`Tiempos analizados desde ${author.tag} (${author.id}): ${url}`);
 
 	const timings_host = url.split('?id=')[0];
 	const timings_id = url.split('?id=')[1];
@@ -50,8 +50,8 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	if (!request_raw) {
 		TimingsEmbed.setFields([{
-			name: '❌ Processing Error',
-			value: 'The bot cannot process this timings report. Please use an alternative timings report.',
+			name: '❌ Error de Procesamiento',
+			value: 'El bot no puede procesar este informe de tiempos. Por favor, utiliza un informe de tiempos alternativo.',
 			inline: true,
 		}]);
 		TimingsEmbed.setColor(parseInt('0xff0000'));
@@ -59,11 +59,12 @@ module.exports = async function analyzeTimings(message, client, args) {
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
+
 	const server_icon = timings_host + 'image.php?id=' + request_raw.icon;
-	TimingsEmbed.setAuthor({ name: 'Timings Analysis', iconURL: (server_icon ?? 'https://i.imgur.com/deE1oID.png'), url: url });
+	TimingsEmbed.setAuthor({ name: 'Analisis de Timings', iconURL: (server_icon ?? ''), url: url });
 
 	if (!request_raw || !request) {
-		TimingsEmbed.addFields([{ name: '❌ Invalid report', value: 'Create a new timings report.', inline: true }]);
+		TimingsEmbed.addFields([{ name: '❌ Reporte inválido', value: 'Crea un nuevo reporte de tiempos.', inline: true }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
@@ -103,7 +104,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	const timing_cost = parseInt(request.timingsMaster.system.timingcost);
 	if (timing_cost > 300) {
-		fields.push({ name: '❌ Timingcost', value: `Your timingcost is ${timing_cost}. Your cpu is overloaded and/or slow. Find a [better host](https://www.birdflop.com).`, inline: true });
+		fields.push({ name: '❌ Coste de tiempos', value: `Tu coste de tiempos es de ${timing_cost}. Tu CPU está sobrecargada y/o lenta. Encuentra un [mejor host](https://paper-chan.moe/paper-optimization/#Hosting-Options).`, inline: true });
 	}
 
 	// fetch the latest mc version
@@ -114,7 +115,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 	// ghetto version check
 	if (version.split('(MC: ')[1].split(')')[0] != latest) {
 		version = version.replace('git-', '').replace('MC: ', '');
-		fields.push({ name: '❌ Outdated', value: `You are using \`${version}\`. Update to \`${latest}\`.`, inline: true });
+		fields.push({ name: '❌ Obsoleto', value: `Estás usando \`${version}\`. Actualiza a \`${latest}\`.`, inline: true });
 	}
 
 	if (TIMINGS_CHECK.servers) {
@@ -134,14 +135,14 @@ module.exports = async function analyzeTimings(message, client, args) {
 				max_mem = max_mem.replace('M', '');
 				max_mem = max_mem.replace('g', '000');
 				max_mem = max_mem.replace('m', '');
-				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value:'ZGC is only good with a lot of memory.', inline: true });
+				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Memoria Baja', value:'ZGC solo es bueno con mucha memoria.', inline: true });
 			}
 		});
 	}
 	else if (flags.includes('-Daikars.new.flags=true')) {
-		if (!flags.includes('-XX:+PerfDisableSharedMem')) fields.push({ name: '❌ Outdated Flags', value: 'Add `-XX:+PerfDisableSharedMem` to flags.', inline: true });
-		if (!flags.includes('-XX:G1MixedGCCountTarget=4')) fields.push({ name: '❌ Outdated Flags', value: 'Add `XX:G1MixedGCCountTarget=4` to flags.', inline: true });
-		if (!flags.includes('-XX:+UseG1GC') && jvm_version.startsWith('1.8.')) fields.push({ name: '❌ Aikar\'s Flags', value: 'You must use G1GC when using Aikar\'s flags.', inline: true });
+		if (!flags.includes('-XX:+PerfDisableSharedMem')) fields.push({ name: '❌ Flags obsoletas', value: 'Agrega `-XX:+PerfDisableSharedMem` a las flags.', inline: true });
+		if (!flags.includes('-XX:G1MixedGCCountTarget=4')) fields.push({ name: '❌ Flags obsoletas', value: 'Agrega `XX:G1MixedGCCountTarget=4` a las flags.', inline: true });
+		if (!flags.includes('-XX:+UseG1GC') && jvm_version.startsWith('1.8.')) fields.push({ name: '❌ Flags de Aikar', value: 'Debes usar G1GC al usar las flags de Aikar.', inline: true });
 		if (flags.includes('-Xmx')) {
 			let max_mem = 0;
 			const flaglist = flags.split(' ');
@@ -154,7 +155,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 					max_mem = max_mem.replace('m', '');
 				}
 			});
-			if (parseInt(max_mem) < 5400) fields.push({ name: '❌ Low Memory', value: 'Allocate at least 6-10GB of ram to your server if you can afford it.', inline: true });
+			if (parseInt(max_mem) < 5400) fields.push({ name: '❌ Poca Memoria', value: 'Asigna al menos 6-10GB de RAM a tu servidor si te lo puedes permitir.', inline: true });
 			let index = 0;
 			let max_online_players = 0;
 			while (index < request.timingsMaster.data.length) {
@@ -164,7 +165,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 				max_online_players = Math.max(players, max_online_players);
 				index = index + 1;
 			}
-			if (1000 * max_online_players / parseInt(max_mem) > 6 && parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value: 'You should be using more RAM with this many players.', inline: true });
+			if (1000 * max_online_players / parseInt(max_mem) > 6 && parseInt(max_mem) < 10000) fields.push({ name: '❌ Poca Memoria', value: 'Deberías usar más RAM con esta cantidad de jugadores.', inline: true });
 			if (flags.includes('-Xms')) {
 				let min_mem = 0;
 				flaglist.forEach(flag => {
@@ -176,26 +177,26 @@ module.exports = async function analyzeTimings(message, client, args) {
 						min_mem = min_mem.replace('m', '');
 					}
 				});
-				if (min_mem != max_mem) fields.push({ name: '❌ Aikar\'s Flags', value: 'Your Xmx and Xms values should be equal when using Aikar\'s flags.', inline: true });
+				if (min_mem != max_mem) fields.push({ name: '❌ Flags de Aikar', value: 'Los valores Xmx y Xms deberían ser iguales al usar las flags de Aikar.', inline: true });
 			}
 		}
 	}
 	else if (flags.includes('-Dusing.aikars.flags=mcflags.emc.gs')) {
-		fields.push({ name: '❌ Outdated Flags', value: 'Update [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Outdated Flags', value: 'Actualiza las [flags de Aikar](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
 	}
 	else {
-		fields.push({ name: '❌ Aikar\'s Flags', value: 'Use [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Aikar\'s Flags', value: 'Usa las [flags de Aikar](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).\n[Video explicativo aquí](https://youtu.be/32YCXG1sV4Y)', inline: true });
 	}
 
 	const cpu = parseInt(request.timingsMaster.system.cpu);
-	if (cpu <= 2) fields.push({ name: '❌ Threads', value: `You only have ${cpu} thread(s). Find a [better host](https://www.birdflop.com).`, inline: true });
+	if (cpu <= 2) fields.push({ name: '❌ Hilos', value: `Solo tienes ${cpu} hilo(s). Encuentra un [mejor host](https://www.birdflop.com).`, inline: true });
 
 	const handlers = Object.keys(request_raw.idmap.handlers).map(i => { return request_raw.idmap.handlers[i]; });
 	handlers.forEach(handler => {
 		let handler_name = handler[1];
 		if (handler_name.startsWith('Command Function - ') && handler_name.endsWith(':tick')) {
 			handler_name = handler_name.split('Command Function - ')[1].split(':tick')[0];
-			fields.push({ name: `❌ ${handler_name}`, value: 'This datapack uses command functions which are laggy.', inline: true });
+			fields.push({ name: `❌ ${handler_name}`, value: 'Este datapack utiliza funciones de comando que son lentas.', inline: true });
 		}
 	});
 
@@ -225,9 +226,9 @@ module.exports = async function analyzeTimings(message, client, args) {
 
 	plugins.forEach(plugin => {
 		if (plugin.authors && plugin.authors.toLowerCase().includes('songoda')) {
-			if (plugin.name == 'EpicHeads') fields.push({ name: '❌ EpicHeads', value: 'This plugin was made by Songoda. Songoda is sketchy. You should find an alternative such as [HeadsPlus](https://spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).', inline: true });
-			else if (plugin.name == 'UltimateStacker') fields.push({ name: '❌ UltimateStacker', value: 'Stacking plugins actually causes more lag.\nRemove UltimateStacker.', inline: true });
-			else fields.push({ name: `❌ ${plugin.name}`, value: 'This plugin was made by Songoda. Songoda is sketchy. You should find an alternative.', inline: true });
+			if (plugin.name == 'EpicHeads') fields.push({ name: '❌ EpicHeads', value: 'Este plugin fue creado por Songoda. Songoda es sospechoso. Deberías buscar una alternativa como [HeadsPlus](https://spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) o [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).', inline: true });
+			else if (plugin.name == 'UltimateStacker') fields.push({ name: '❌ UltimateStacker', value: 'Usar plugins de stacking de entidades en realidad causa más lag.\nElimina UltimateStacker.', inline: true });
+			else fields.push({ name: `❌ ${plugin.name}`, value: 'Este plugin fue creado por Songoda. Songoda es sospechoso. Deberías buscar una alternativa.', inline: true });
 		}
 	});
 
@@ -237,7 +238,7 @@ module.exports = async function analyzeTimings(message, client, args) {
 		const max_entity_cramming = parseInt(world.gamerules.maxEntityCramming);
 		if (max_entity_cramming >= 24) high_mec = true;
 	});
-	if (high_mec) fields.push({ name: '❌ maxEntityCramming', value: 'Decrease this by running the /gamerule command in each world. Recommended: 8.', inline: true });
+	if (high_mec) fields.push({ name: '❌ maxEntityCramming', value: 'Disminuye esto ejecutando el comando `/gamerule` en cada mundo. Recomendado: 8.', inline: true });
 
 	const normal_ticks = request.timingsMaster.data[0].totalTicks;
 	let worst_tps = 20;
@@ -268,19 +269,19 @@ module.exports = async function analyzeTimings(message, client, args) {
 	if (timing_cost > 500) {
 		const suggestions = fields.length - 1;
 		TimingsEmbed.setColor(0xff0000).setDescription(null)
-			.setFields([{ name: '❌ Timingcost (CRITICAL)', value: `Your timingcost is ${timing_cost}. This value would be at most 200 on a reasonable server. Your cpu is critically overloaded and/or slow. Hiding ${suggestions} comparitively negligible suggestions until you resolve this fundamental problem. Find a [better host](https://www.birdflop.com).`, inline: true }]);
+			.setFields([{ name: '❌ Timingcost (CRÍTICO)', value: `El costo de tiempo es ${timing_cost}. Este valor sería como máximo 200 en un servidor razonable. Su CPU está sobrecargada y/o es lenta. Ocultando ${suggestions} sugerencias comparativamente insignificantes hasta que resuelva este problema fundamental. Encuentra un [mejor host](https://paper-chan.moe/paper-optimization/#Hosting-Options).`, inline: true }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 
 	if (fields.length == 0) {
-		TimingsEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
+		TimingsEmbed.addFields([{ name: '✅ Todo bien', value: 'Analizado sin recomendaciones.' }]);
 		return [{ embeds: [TimingsEmbed] }];
 	}
 	let components = [];
 	const suggestions = [...fields];
 	if (suggestions.length >= 13) {
-		fields.splice(12, suggestions.length, { name: `Plus ${suggestions.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		TimingsEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
+		fields.splice(12, suggestions.length, { name: `Además de ${suggestions.length - 12} recomendaciones más`, value: 'Haz clic en los botones de abajo para ver más' });
+		TimingsEmbed.setFooter({ text: `Solicitado por ${author.tag} • Página 1 de ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([
@@ -293,25 +294,25 @@ module.exports = async function analyzeTimings(message, client, args) {
 						.setEmoji({ name: '➡️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setURL('https://github.com/pemigrade/botflop')
-						.setLabel('Botflop')
+						.setURL('https://www.youtube.com/@ChasisTorcido')
+						.setLabel('Más consejos para servidores')
 						.setStyle(ButtonStyle.Link),
 				]),
 		);
 	}
 	TimingsEmbed.addFields(fields);
 	if (worst_tps >= 19) {
-		TimingsEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with its lowest TPS being ${worst_tps}.` }]);
+		TimingsEmbed.setFields([{ name: '✅ Tu servidor no está laggeando', value: `Tu servidor está funcionando bien con su TPS más bajo siendo de ${worst_tps}.` }]);
 		components = [
 			new ActionRowBuilder()
 				.addComponents([
 					new ButtonBuilder()
 						.setCustomId('analysis_force')
-						.setLabel('Dismiss and force analysis')
+						.setLabel('Descartar y forzar análisis')
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setURL('https://github.com/pemigrade/botflop')
-						.setLabel('Botflop')
+						.setURL('https://www.youtube.com/@ChasisTorcido')
+						.setLabel('Más consejos para servidores')
 						.setStyle(ButtonStyle.Link),
 				]),
 		];

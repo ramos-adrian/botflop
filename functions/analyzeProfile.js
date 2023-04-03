@@ -11,7 +11,7 @@ function componentToHex(c) {
 module.exports = async function analyzeProfile(message, client, args) {
 	const author = message.author ?? message.user;
 	const ProfileEmbed = new EmbedBuilder()
-		.setDescription('These are not magic values. Many of these settings have real consequences on your server\'s mechanics. See [this guide](https://eternity.community/index.php/paper-optimization/) for detailed information on the functionality of each setting.')
+		.setDescription('Estos no son valores mágicos. Muchas de estas configuraciones tienen consecuencias reales en la mecánica de tu servidor. Consulta [esta guía en inglés](https://eternity.community/index.php/paper-optimization/) para obtener información detallada sobre la funcionalidad de cada configuración.\n\nTambién puedes ver esta [serie de videos en español](https://www.youtube.com/playlist?list=PLXzwWvD3jl-s1P__FQnwZ3OujFilCJEQU) para conocer más acerca de estas configuraciones.')
 		.setFooter({ text: `Requested by ${author.tag}`, iconURL: author.avatarURL() });
 
 	let url;
@@ -19,7 +19,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	for (const arg of args) {
 		if (message.commandName && (arg.startsWith('https://timin') || arg.startsWith('https://www.spigotmc.org/go/timings?url=') || arg.startsWith('https://spigotmc.org/go/timings?url='))) {
-			ProfileEmbed.addFields([{ name: '⚠️ Timings Report', value: 'This is a Timings report. Use /timings instead for this type of report.' }]);
+			ProfileEmbed.addFields([{ name: '⚠️ Informe de Timings', value: 'Este es un informe de Timings. Use /timings en su lugar para este tipo de informe.' }]);
 			return [{ embeds: [ProfileEmbed] }];
 		}
 		if (arg.startsWith('https://spark.lucko.me/')) url = arg;
@@ -30,15 +30,15 @@ module.exports = async function analyzeProfile(message, client, args) {
 	// Start typing
 	if (!message.commandName) await message.channel.sendTyping();
 
-	client.logger.info(`Spark Profile analyzed from ${author.tag} (${author.id}): ${url}`);
+	client.logger.info(`Perfil de Spark analizado desde ${author.tag} (${author.id}): ${url}`);
 
 	const response_raw = await fetch(url + '?raw=1');
 	const sampler = await response_raw.json();
 
 	if (!sampler) {
 		ProfileEmbed.setFields([{
-			name: '❌ Processing Error',
-			value: 'The bot cannot process this Spark profile. Please use an alternative Spark profile.',
+			name: '❌ Error de procesamiento',
+			value: 'El bot no puede procesar este perfil de Spark. Por favor, use un perfil de Spark alternativo.',
 			inline: true,
 		}]);
 		ProfileEmbed.setColor(0xff0000);
@@ -46,7 +46,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 		return [{ embeds: [ProfileEmbed] }];
 	}
 
-	ProfileEmbed.setAuthor({ name: 'Spark Profile Analysis', iconURL: 'https://i.imgur.com/deE1oID.png', url: url });
+	ProfileEmbed.setAuthor({ name: 'Análisis del perfil de Spark', iconURL: 'https://spark.lucko.me/assets/logo-inverted-512.png', url: url });
 
 	let version = sampler.metadata.platform.version;
 	client.logger.info(version);
@@ -88,7 +88,7 @@ module.exports = async function analyzeProfile(message, client, args) {
 	// ghetto version check
 	if (version.split('(MC: ')[1].split(')')[0] != latest) {
 		version = version.replace('git-', '').replace('MC: ', '');
-		fields.push({ name: '❌ Outdated', value: `You are using \`${version}\`. Update to \`${latest}\`.`, inline: true });
+		fields.push({ name: '❌ Desactualizado', value: `Estás utilizando \`${version}\`. Actualiza a \`${latest}\`.`, inline: true });
 	}
 
 	if (PROFILE_CHECK.servers) {
@@ -109,14 +109,14 @@ module.exports = async function analyzeProfile(message, client, args) {
 				max_mem = max_mem.replace('M', '');
 				max_mem = max_mem.replace('g', '000');
 				max_mem = max_mem.replace('m', '');
-				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value:'ZGC is only good with a lot of memory.', inline: true });
+				if (parseInt(max_mem) < 10000) fields.push({ name: '❌ Poca memoria', value:'ZGC solo es bueno con mucha memoria.', inline: true });
 			}
 		});
 	}
 	else if (flags.includes('-Daikars.new.flags=true')) {
-		if (!flags.includes('-XX:+PerfDisableSharedMem')) fields.push({ name: '❌ Outdated Flags', value: 'Add `-XX:+PerfDisableSharedMem` to flags.', inline: true });
-		if (!flags.includes('-XX:G1MixedGCCountTarget=4')) fields.push({ name: '❌ Outdated Flags', value: 'Add `XX:G1MixedGCCountTarget=4` to flags.', inline: true });
-		if (!flags.includes('-XX:+UseG1GC') && jvm_version.startsWith('1.8.')) fields.push({ name: '❌ Aikar\'s Flags', value: 'You must use G1GC when using Aikar\'s flags.', inline: true });
+		if (!flags.includes('-XX:+PerfDisableSharedMem')) fields.push({ name: '❌ Flags obsoletas', value: 'Agrega `-XX:+PerfDisableSharedMem` a las flags.', inline: true });
+		if (!flags.includes('-XX:G1MixedGCCountTarget=4')) fields.push({ name: '❌ Flags obsoletas', value: 'Agrega `XX:G1MixedGCCountTarget=4` a las flags.', inline: true });
+		if (!flags.includes('-XX:+UseG1GC') && jvm_version.startsWith('1.8.')) fields.push({ name: '❌ Flags de Aikar', value: 'Debes usar G1GC cuando usas las flags de Aikar.', inline: true });
 		if (flags.includes('-Xmx')) {
 			let max_mem = 0;
 			const flaglist = flags.split(' ');
@@ -129,8 +129,8 @@ module.exports = async function analyzeProfile(message, client, args) {
 					max_mem = max_mem.replace('m', '');
 				}
 			});
-			if (parseInt(max_mem) < 5400) fields.push({ name: '❌ Low Memory', value: 'Allocate at least 6-10GB of ram to your server if you can afford it.', inline: true });
-			if (1000 * sampler.metadata.platformStatistics.playerCount / parseInt(max_mem) > 6 && parseInt(max_mem) < 10000) fields.push({ name: '❌ Low Memory', value: 'You should be using more RAM with this many players.', inline: true });
+			if (parseInt(max_mem) < 5400) fields.push({ name: '❌ Poca Memoria', value: 'Asigna al menos 6-10GB de RAM a tu servidor si te lo puedes permitir.', inline: true });
+			if (1000 * sampler.metadata.platformStatistics.playerCount / parseInt(max_mem) > 6 && parseInt(max_mem) < 10000) fields.push({ name: '❌ Poca Memoria', value: 'Deberías estar usando más RAM con tantos jugadores.', inline: true });
 			if (flags.includes('-Xms')) {
 				let min_mem = 0;
 				flaglist.forEach(flag => {
@@ -142,19 +142,19 @@ module.exports = async function analyzeProfile(message, client, args) {
 						min_mem = min_mem.replace('m', '');
 					}
 				});
-				if (min_mem != max_mem) fields.push({ name: '❌ Aikar\'s Flags', value: 'Your Xmx and Xms values should be equal when using Aikar\'s flags.', inline: true });
+				if (min_mem != max_mem) fields.push({ name: '❌ Flags de Aikar', value: 'Tus valores de Xmx y Xms deben ser iguales al usar las flags de Aikar.', inline: true });
 			}
 		}
 	}
 	else if (flags.includes('-Dusing.aikars.flags=mcflags.emc.gs')) {
-		fields.push({ name: '❌ Outdated Flags', value: 'Update [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Flags obsoletas', value: 'Actualiza las [flags de Aikar](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
 	}
 	else {
-		fields.push({ name: '❌ Aikar\'s Flags', value: 'Use [Aikar\'s flags](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/).', inline: true });
+		fields.push({ name: '❌ Flags de Aikar', value: 'Utiliza [las flags de Aikar](https://aikar.co/2018/07/02/tuning-the-jvm-g1gc-garbage-collector-flags-for-minecraft/) para optimizar el rendimiento de la JVM.\n[Video explicativo aquí](https://youtu.be/32YCXG1sV4Y)', inline: true });
 	}
 
 	const cpu = sampler.metadata.systemStatistics.cpu.threads;
-	if (cpu <= 2) fields.push({ name: '❌ Threads', value: `You only have ${cpu} thread(s). Find a [better host](https://www.birdflop.com).`, inline: true });
+	if (cpu <= 2) fields.push({ name: '❌ Hilos', value: `Solo tienes ${cpu} hilo(s). Encuentra un [mejor hosting](https://paper-chan.moe/paper-optimization/#Hosting-Options).`, inline: true });
 
 	// Probably a way to do this, idk yet
 	// const handlers = Object.keys(request_raw.idmap.handlers).map(i => { return request_raw.idmap.handlers[i]; });
@@ -193,9 +193,9 @@ module.exports = async function analyzeProfile(message, client, args) {
 
 	plugins.forEach(plugin => {
 		if (plugin.authors && plugin.authors.toLowerCase().includes('songoda')) {
-			if (plugin.name == 'EpicHeads') fields.push({ name: '❌ EpicHeads', value: 'This plugin was made by Songoda. Songoda is sketchy. You should find an alternative such as [HeadsPlus](https://spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) or [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).', inline: true });
-			else if (plugin.name == 'UltimateStacker') fields.push({ name: '❌ UltimateStacker', value: 'Stacking plugins actually causes more lag.\nRemove UltimateStacker.', inline: true });
-			else fields.push({ name: `❌ ${plugin.name}`, value: 'This plugin was made by Songoda. Songoda is sketchy. You should find an alternative.', inline: true });
+			if (plugin.name == 'EpicHeads') fields.push({ name: '❌ EpicHeads', value: 'Este plugin fue creado por Songoda. Songoda es sospechoso. Deberías encontrar una alternativa como [HeadsPlus](https://spigotmc.org/resources/headsplus-»-1-8-1-16-4.40265/) o [HeadDatabase](https://www.spigotmc.org/resources/head-database.14280/).', inline: true });
+			else if (plugin.name == 'UltimateStacker') fields.push({ name: '❌ UltimateStacker', value: 'Los plugins de stacking de entidades en realidad causan más lag.\nElimina UltimateStacker.', inline: true });
+			else fields.push({ name: `❌ ${plugin.name}`, value: 'Este plugin fue creado por Songoda. Songoda es sospechoso. Deberías encontrar una alternativa.', inline: true });
 		}
 	});
 
@@ -224,14 +224,14 @@ module.exports = async function analyzeProfile(message, client, args) {
 	ProfileEmbed.setColor(parseInt('0x' + componentToHex(red) + componentToHex(green) + '00'));
 
 	if (fields.length == 0) {
-		ProfileEmbed.addFields([{ name: '✅ All good', value: 'Analyzed with no recommendations.' }]);
+		ProfileEmbed.addFields([{ name: '✅ Todo bien', value: 'Analizado sin recomendaciones.' }]);
 		return [{ embeds: [ProfileEmbed] }];
 	}
 	let components = [];
 	const suggestions = [...fields];
 	if (suggestions.length >= 13) {
-		fields.splice(12, suggestions.length, { name: `Plus ${suggestions.length - 12} more recommendations`, value: 'Click the buttons below to see more' });
-		ProfileEmbed.setFooter({ text: `Requested by ${author.tag} • Page 1 of ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
+		fields.splice(12, suggestions.length, { name: `Además de ${suggestions.length - 12} recomendaciones adicionales`, value: 'Haz clic en los botones de abajo para ver más' });
+		ProfileEmbed.setFooter({ text: `Solicitado por ${author.tag} • Página 1 de ${Math.ceil(suggestions.length / 12)}`, iconURL: author.avatarURL() });
 		components.push(
 			new ActionRowBuilder()
 				.addComponents([
@@ -244,28 +244,30 @@ module.exports = async function analyzeProfile(message, client, args) {
 						.setEmoji({ name: '➡️' })
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setURL('https://github.com/pemigrade/botflop')
-						.setLabel('Botflop')
+						.setURL('https://www.youtube.com/@ChasisTorcido')
+						.setLabel('Más consejos para servidores')
 						.setStyle(ButtonStyle.Link),
 				]),
 		);
 	}
+
 	ProfileEmbed.addFields(fields);
 	if (avgtps >= 19) {
-		ProfileEmbed.setFields([{ name: '✅ Your server isn\'t lagging', value: `Your server is running fine with an average TPS of ${avgtps}.` }]);
+		ProfileEmbed.setFields([{ name: '✅ Tu servidor no está retrasado', value: `Tu servidor funciona bien con un promedio de TPS de ${avgtps}.` }]);
 		components = [
 			new ActionRowBuilder()
 				.addComponents([
 					new ButtonBuilder()
 						.setCustomId('analysis_force')
-						.setLabel('Dismiss and force analysis')
+						.setLabel('Descartar y forzar análisis')
 						.setStyle(ButtonStyle.Secondary),
 					new ButtonBuilder()
-						.setURL('https://github.com/pemigrade/botflop')
-						.setLabel('Botflop')
+						.setURL('https://www.youtube.com/@ChasisTorcido')
+						.setLabel('Más consejos para servidores')
 						.setStyle(ButtonStyle.Link),
 				]),
 		];
 	}
+
 	return [{ embeds: [ProfileEmbed], components }, suggestions];
 };

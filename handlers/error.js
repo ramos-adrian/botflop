@@ -12,14 +12,7 @@ module.exports = client => {
 			.setDescription(`\`\`\`\n${err}\n\`\`\``);
 		const row = [];
 		if (!userError) {
-			errEmbed.setFooter({ text: 'This was most likely an error on our end. Please report this at the Birdflop Discord' });
-			row.push(new ActionRowBuilder()
-				.addComponents([
-					new ButtonBuilder()
-						.setURL('https://discord.gg/nmgtX5z')
-						.setLabel('Birdflop')
-						.setStyle(ButtonStyle.Link),
-				]));
+			errEmbed.setFooter({ text: 'This was most likely an error on our end.' });
 		}
 		message.reply({ embeds: [errEmbed], components: row }).catch(err => {
 			client.logger.warn(err);

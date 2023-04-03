@@ -1,13 +1,14 @@
 SilkSpawners:
   prefix: "❌"
   value: |-
-    You probably don't need SilkSpawners as Purpur already has its features.
+    Probablemente no necesitas SilkSpawners ya que Purpur ya tiene sus funciones.
 MineableSpawners:
   prefix: "❌"
   value: |-
-    You probably don't need MineableSpawners as Purpur already has its features.
+    Probablemente no necesitas MineableSpawners ya que Purpur ya tiene sus funciones.
 VillagerLobotomizatornator:
   prefix: "❌"
   value: |-
-    You probably don't need VillagerLobotomizatornator as Purpur already adds its features.
-    Enable villager.lobotomize.enabled in purpur.yml.
+    Probablemente no necesitas VillagerLobotomizatornator ya que Purpur ya agrega sus funciones.
+    Habilita villager.lobotomize.enabled en purpur.yml.
+

@@ -3,43 +3,43 @@ const analyzeProfile = require('../functions/analyzeProfile');
 const { createPaste } = require('hastebin');
 const fetch = (...args) => import('node-fetch').then(({ default: e }) => e(...args));
 const { EmbedBuilder, PermissionsBitField, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
-module.exports = async (client, message) => {
-	if (message.author.bot) return;
+module.exports = async (cliente, mensaje) => {
+	if (mensaje.author.bot) return;
 
-	// If the bot can't read message history or send messages, don't execute a command
-	if (message.guild && (!message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.SendMessages) || !message.guild.members.me.permissionsIn(message.channel).has(PermissionsBitField.Flags.ReadMessageHistory))) return;
+	// Si el bot no puede leer el historial de mensajes o enviar mensajes, no ejecuta un comando
+	if (mensaje.guild && (!mensaje.guild.members.me.permissionsIn(mensaje.channel).has(PermissionsBitField.Flags.SendMessages) || !mensaje.guild.members.me.permissionsIn(mensaje.channel).has(PermissionsBitField.Flags.ReadMessageHistory))) return;
 
-	// make a custom function to replace message.reply
-	// this is to send the message to the channel without a reply if reply fails
-	message.msgreply = message.reply;
-	message.reply = function reply(object) {
-		return message.msgreply(object).catch(err => {
-			client.logger.warn(err);
-			return message.channel.send(object).catch(err => {
-				client.logger.error(err.stack);
+	// hacer una función personalizada para reemplazar message.reply
+	// esto es para enviar el mensaje al canal sin una respuesta si falla la respuesta
+	mensaje.msgreply = mensaje.reply;
+	mensaje.reply = function reply(objeto) {
+		return mensaje.msgreply(objeto).catch(err => {
+			cliente.logger.warn(err);
+			return mensaje.channel.send(objeto).catch(err => {
+				cliente.logger.error(err.stack);
 			});
 		});
 	};
 
-	// Get the prefix
-	let prefix = process.env.PREFIX;
+	// Obtener el prefijo
+	let prefijo = process.env.PREFIX;
 
 	try {
 		// Binflop
-		if (message.attachments.size > 0) {
-			const url = message.attachments.first().url;
-			const filetypes = ['.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf'];
+		if (mensaje.attachments.size > 0) {
+			const url = mensaje.attachments.first().url;
+			const tiposArchivo = ['.log', '.txt', '.json', '.yml', '.yaml', '.css', '.py', '.js', '.sh', '.config', '.conf'];
 			if (!url.endsWith('.html')) {
-				if (!message.attachments.first().contentType) return;
-				const filetype = message.attachments.first().contentType.split('/')[0];
-				if (filetypes.some(ext => url.endsWith(ext)) || filetype == 'text') {
-					// Start typing
-					await message.channel.sendTyping();
+				if (!mensaje.attachments.first().contentType) return;
+				const tipoArchivo = mensaje.attachments.first().contentType.split('/')[0];
+				if (tiposArchivo.some(ext => url.endsWith(ext)) || tipoArchivo == 'text') {
+					// Empezar a escribir
+					await mensaje.channel.sendTyping();
 
-					// fetch the file from the external URL
+					// obtener el archivo de la URL externa
 					const res = await fetch(url);
-
-					// take the response stream and read it to completion
+					
+					// Toma el flujo de respuesta y léelo hasta completarlo
 					let text = await res.text();
 
 					let truncated = false;
@@ -49,24 +49,24 @@ module.exports = async (client, message) => {
 					}
 
 					let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
-					if (truncated) response = response + '\n(file was truncated because it was too long.)';
+					if (truncated) response = response + '\n(el archivo fue truncado porque era demasiado largo)';
 
 					const PasteEmbed = new EmbedBuilder()
-						.setTitle('Please use a paste service')
+						.setTitle('Por favor utiliza un servicio de pegado')
 						.setColor(0x1D83D4)
 						.setDescription(response)
-						.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
+						.setFooter({ text: `Solicitado por ${message.author.tag}`, iconURL: message.author.avatarURL() });
 					await message.channel.send({ embeds: [PasteEmbed] });
-					client.logger.info(`File uploaded by ${message.author.tag} (${message.author.id}): ${response}`);
+					client.logger.info(`Archivo subido por ${message.author.tag} (${message.author.id}): ${response}`);
 				}
 			}
 		}
 
-		// Pastebin is blocked in some countries
+		// Pastebin está bloqueado en algunos países
 		const words = message.content.replace(/\n/g, ' ').split(' ');
 		for (const word of words) {
 			if (word.startsWith('https://pastebin.com/') && word.length == 29) {
-				// Start typing
+				// Comenzar a escribir
 				await message.channel.sendTyping();
 
 				const key = word.split('/')[3];
@@ -80,17 +80,18 @@ module.exports = async (client, message) => {
 				}
 
 				let response = await createPaste(text, { server: 'https://bin.birdflop.com' });
-				if (truncated) response = response + '\n(file was truncated because it was too long.)';
+				if (truncated) response = response + '\n(el archivo fue truncado porque era demasiado largo)';
 
 				const PasteEmbed = new EmbedBuilder()
-					.setTitle('Pastebin is blocked in some countries')
+					.setTitle('Pastebin está bloqueado en algunos países')
 					.setColor(0x1D83D4)
 					.setDescription(response)
-					.setFooter({ text: `Requested by ${message.author.tag}`, iconURL: message.author.avatarURL() });
+					.setFooter({ text: `Solicitado por ${message.author.tag}`, iconURL: message.author.avatarURL() });
 				await message.channel.send({ embeds: [PasteEmbed] });
-				client.logger.info(`Pastebin converted from ${message.author.tag} (${message.author.id}): ${response}`);
+				client.logger.info(`Pastebin convertido por ${message.author.tag} (${message.author.id}): ${response}`);
 			}
 		}
+
 
 		// Use mention as prefix instead of prefix too
 		if (message.content.replace('!', '').startsWith(`<@${client.user.id}>`)) prefix = message.content.split('>')[0] + '>';
@@ -119,7 +120,7 @@ module.exports = async (client, message) => {
 							const fields = [...issues];
 							const components = [];
 							if (issues.length >= 13) {
-								fields.splice(12, issues.length, { name: '✅ Your server isn\'t lagging', value: `**Plus ${issues.length - 12} more recommendations**\nClick the buttons below to see more` });
+								fields.splice(12, issues.length, { name: '✅ Su servidor no está con lag', value: `**Además de ${issues.length - 12} recomendaciones más**\nHaga clic en los botones de abajo para ver más` });
 								components.push(
 									new ActionRowBuilder()
 										.addComponents([
@@ -140,14 +141,15 @@ module.exports = async (client, message) => {
 							}
 							AnalysisEmbed.setFields(fields);
 
+
 							// Send the embed
 							return analysismsg.edit({ embeds: [AnalysisEmbed], components });
 						}
 
 						// Calculate total amount of pages and get current page from embed footer
 						const text = footer.text.split(' • ');
-						const lastPage = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[0]);
-						const maxPages = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[2]);
+						const lastPage = parseInt(text[text.length - 1].split('Página ')[1].split(' ')[0]);
+						const maxPages = parseInt(text[text.length - 1].split('Página ')[1].split(' ')[2]);
 
 						// Get next page (if last page, go to pg 1)
 						const page = i.customId == 'analysis_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
@@ -156,7 +158,7 @@ module.exports = async (client, message) => {
 						const fields = issues.slice(start, end);
 
 						// Update the embed
-						text[text.length - 1] = `Page ${page} of ${Math.ceil(issues.length / 12)}`;
+						text[text.length - 1] = `Página ${page} de ${Math.ceil(issues.length / 12)}`;
 						AnalysisEmbed
 							.setFields(fields)
 							.setFooter({ iconURL: footer.iconURL, text: text.join(' • ') });
@@ -194,7 +196,7 @@ module.exports = async (client, message) => {
 	if (command.args && args.length < 1) {
 		const Usage = new EmbedBuilder()
 			.setColor(0x5662f6)
-			.setTitle('Usage')
+			.setTitle('Uso')
 			.setDescription(`\`${prefix + command.name + ' ' + command.usage}\``);
 		return message.reply({ embeds: [Usage] });
 	}

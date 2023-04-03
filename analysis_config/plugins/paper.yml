@@ -1,101 +1,110 @@
 ClearLag:
   prefix: "❌"
   value: |-
-    Plugins that claim to remove lag actually cause more lag.
+    Los plugins que afirman eliminar el lag en realidad causan más lag. 
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 LagAssist:
   prefix: "❌"
   value: |-
-    LagAssist should only be used for analytics and preventative measures.
-    All other features of the plugin should be disabled.
+    LagAssist solo debe ser usado para análisis y medidas preventivas.
+    Todas las demás características del plugin deben ser desactivadas.
 NoMobLag:
   prefix: "❌"
   value: |-
-    Plugins that claim to remove lag actually cause more lag.
+    Los plugins que afirman eliminar el lag en realidad causan más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 ServerBooster:
   prefix: "❌"
   value: |-
-    Plugins that claim to remove lag actually cause more lag.
+    Los plugins que afirman eliminar el lag en realidad causan más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 AntiLag:
   prefix: "❌"
   value: |-
-    Plugins that claim to remove lag actually cause more lag.
+    Los plugins que afirman eliminar el lag en realidad causan más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 BookLimiter:
   prefix: "❌"
   value: |-
-    You don't need BookLimiter as Paper already fixes all crash bugs.
+    No necesitas BookLimiter ya que Paper ya corrige todos los errores de bloqueo.
 LimitPillagers:
   prefix: "❌"
   value: |-
-    LimitPillagers is not useful in 1.15 and above.
+    LimitPillagers no es útil en la versión 1.15 y superior.
 VillagerOptimiser:
   prefix: "❌"
   value: |-
-    VillagerOptimiser is not useful in 1.15 and above.
+    VillagerOptimiser no es útil en la versión 1.15 y superior.
 StackMob:
   prefix: "❌"
   value: |-
-    Stacking mobs causes more lag.
+    Acumular mobs causa más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 Stacker:
   prefix: "❌"
   value: |-
-    Stacking mobs causes more lag.
+    Acumular mobs causa más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 MobStacker:
   prefix: "❌"
   value: |-
-    Stacking mobs causes more lag.
+    Acumular mobs causa más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 WildStacker:
   prefix: "❌"
   value: |-
-    Stacking mobs causes more lag.
+    Acumular mobs causa más lag.
+    Estos plugins se encuentran en la [Lista de la vergüenza para creadores de servidores](https://youtu.be/c5i3Ky2Q63U).
 FastAsyncWorldEdit:
   prefix: "❌"
   value: |-
-    FAWE has been known to cause issues.
-    Consider replacing FAWE with [Worldedit](https://enginehub.org/worldedit/#downloads).
+    Se sabe que FAWE causa problemas.
+    Considera reemplazar FAWE con [Worldedit](https://enginehub.org/worldedit/#downloads).
 IllegalStack:
   prefix: "❌"
   value: |-
-    You probably don't need IllegalStack as Paper already fixes all dupe and crash bugs.
+    Probablemente no necesites IllegalStack ya que Paper ya corrige todos los errores de duplicación y bloqueo.
 ExploitFixer:
   prefix: "❌"
   value: |-
-    You probably don't need ExploitFixer as Paper already fixes all dupe and crash bugs.
+    Probablemente no necesites ExploitFixer ya que Paper ya corrige todos los errores de duplicación y bloqueo.
 EntityTrackerFixer:
   prefix: "❌"
   value: |-
-    You don't need EntityTrackerFixer as Paper already has its features.
+    No necesitas EntityTrackerFixer ya que Paper ya tiene sus características.
 Orebfuscator:
   prefix: "❌"
   value: |-
-    You don't need Orebfuscator as [Paper](https://gist.github.com/stonar96/ba18568bd91e5afd590e8038d14e245e) already has its features.
+    No necesitas Orebfuscator ya que [Paper](https://gist.github.com/stonar96/ba18568bd91e5afd590e8038d14e245e) ya tiene sus características.
+    Aquí hay un [video sobre como configurar en AntiXray de paper](https://youtu.be/ogWkkdeLOaQ)
 GroupManager:
   prefix: "❌"
   value: |-
-    GroupManager is an outdated permission plugin.
-    Consider replacing it with [LuckPerms](https://luckperms.net/download).
+    GroupManager es un plugin de permisos obsoleto.
+    Considera reemplazarlo con [LuckPerms](https://luckperms.net/download).
 PermissionsEx:
   prefix: "❌"
   value: |-
-    PermissionsEx is an outdated permission plugin.
-    Consider replacing it with [LuckPerms](https://luckperms.net/download).
+    PermissionsEx es un plugin de permisos obsoleto.
+    Considera reemplazarlo con [LuckPerms](https://luckperms.net/download).
 bPermissions:
   prefix: "❌"
   value: |-
-    bPermissions is an outdated permission plugin.
-    Consider replacing it with [LuckPerms](https://luckperms.net/download).
+    bPermissions es un plugin de permisos obsoleto.
+    Considera reemplazarlo con [LuckPerms](https://luckperms.net/download).
 PhantomSMP:
 - expressions:
   - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "false"
   prefix: "❌"
   value: |-
-    You probably don't need PhantomSMP as Paper already has its features.
+    Probablemente no necesitas PhantomSMP ya que Paper ya tiene sus funciones.
 - expressions:
   - paper["world-settings"]["default"]["phantoms-only-attack-insomniacs"] == "true"
   prefix: "❌"
   value: |-
-    You probably don't need PhantomSMP as Paper already has its features.
-    Enable phantoms-only-attack-insomniacs in paper.yml.
+    Probablemente no necesitas PhantomSMP ya que Paper ya tiene sus funciones.
+    Habilita phantoms-only-attack-insomniacs en paper.yml.
 PacketLimiter:
   prefix: "❌"
   value: |-
-    You don't need PacketLimiter as Paper already has its features.
+    No necesitas PacketLimiter ya que Paper ya tiene sus funciones.

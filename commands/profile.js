@@ -2,22 +2,22 @@ const analyzeProfile = require('../functions/analyzeProfile.js');
 const { EmbedBuilder, ApplicationCommandOptionType, ActionRowBuilder, ButtonBuilder, ButtonStyle } = require('discord.js');
 module.exports = {
 	name: 'profile',
-	description: 'Analyze Spark profiles to help optimize your server.',
+	description: 'Analiza perfiles de Spark para ayudar a optimizar tu servidor.',
 	args: true,
-	usage: '<Spark Profile Link>',
+	usage: '<Enlace del perfil de Spark>',
 	options: [{
 		'type': ApplicationCommandOptionType.String,
 		'name': 'url',
-		'description': 'The Spark Profile URL',
+		'description': 'El enlace del perfil de Spark',
 		'required': true,
 	}],
 	async execute(message, args, client) {
 		try {
 			const profileresult = await analyzeProfile(message, client, args);
-			const profilemsg = await message.reply(profileresult ? profileresult[0] : 'Invalid Profile URL.');
+			const profilemsg = await message.reply(profileresult ? profileresult[0] : 'Enlace del perfil inválido.');
 			if (!profileresult) return;
 
-			// Get the issues from the profile result
+			// Obtener los problemas del resultado del perfil
 			const suggestions = profileresult[1];
 			if (!suggestions) return;
 			const filter = i => i.user.id == (message.author ?? message.user).id && i.customId.startsWith('analysis_');
@@ -26,16 +26,16 @@ module.exports = {
 				// Defer button
 				await i.deferUpdate();
 
-				// Get the embed
+				// Obtener el embed
 				const ProfileEmbed = new EmbedBuilder(i.message.embeds[0].toJSON());
 				const footer = ProfileEmbed.toJSON().footer;
 
-				// Force analysis button
+				// Botón de análisis forzado
 				if (i.customId == 'analysis_force') {
 					const fields = [...suggestions];
 					const components = [];
 					if (suggestions.length >= 13) {
-						fields.splice(12, suggestions.length, { name: '✅ Your server isn\'t lagging', value: `**Plus ${suggestions.length - 12} more recommendations**\nClick the buttons below to see more` });
+						fields.splice(12, suggestions.length, { name: '✅ Tu servidor no tiene lag', value: `**Más ${suggestions.length - 12} recomendaciones**\nHaz clic en los botones de abajo para ver más` });
 						components.push(
 							new ActionRowBuilder()
 								.addComponents([
@@ -48,31 +48,32 @@ module.exports = {
 										.setEmoji({ name: '➡️' })
 										.setStyle(ButtonStyle.Secondary),
 									new ButtonBuilder()
-										.setURL('https://github.com/pemigrade/botflop')
-										.setLabel('Botflop')
+										.setURL('https://www.youtube.com/@ChasisTorcido')
+										.setLabel('Más consejos para servidores')
 										.setStyle(ButtonStyle.Link),
 								]),
 						);
 					}
 					ProfileEmbed.setFields(fields);
 
-					// Send the embed
+					// Enviar el embed
 					return i.editReply({ embeds: [ProfileEmbed], components });
 				}
 
-				// Calculate total amount of pages and get current page from embed footer
+				// Calcular la cantidad total de páginas y obtener la página actual del pie de página del embed
 				const text = footer.text.split(' • ');
-				const lastPage = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[0]);
-				const maxPages = parseInt(text[text.length - 1].split('Page ')[1].split(' ')[2]);
+				const lastPage = parseInt(text[text.length - 1].split('Página ')[1].split(' ')[0]);
+				const maxPages = parseInt(text[text.length - 1].split('Página ')[1].split(' ')[2]);
 
-				// Get next page (if last page, go to pg 1)
+				// Obtener la siguiente página (si es la última página, ir a la pg 1)
 				const page = i.customId == 'analysis_next' ? lastPage == maxPages ? 1 : lastPage + 1 : lastPage - 1 ? lastPage - 1 : maxPages;
 				const end = page * 12;
 				const start = end - 12;
+				
 				const fields = suggestions.slice(start, end);
 
 				// Update the embed
-				text[text.length - 1] = `Page ${page} of ${Math.ceil(suggestions.length / 12)}`;
+				text[text.length - 1] = `Página ${page} de ${Math.ceil(suggestions.length / 12)}`;
 				ProfileEmbed
 					.setFields(fields)
 					.setFooter({ iconURL: footer.icon_url, text: text.join(' • ') });
